@@ -7,10 +7,14 @@
 
 declare module Deps {
 
-	export interface Dependency {
-		constructor();
+	function flush():void;
+
+	class Dependency {
+
 		depend(computation?):boolean;
+
 		changed():void;
+
 		hasDependents():boolean;
 	}
 }
@@ -20,18 +24,6 @@ declare module Npm {
 	export function require(module:string);
 
 	export function depends(dependencies:{[id:string]:string});
-}
-
-interface BundleOptions {
-	type: string;
-	path: string;
-	data: any;
-	where: string[];
-}
-
-interface Bundle {
-	add_resource(options:BundleOptions);
-	error(diagnostics:string);
 }
 
 // PACKAGE --------------------
@@ -60,6 +52,18 @@ declare module Package {
 		add_files(file:string, where?:string);
 		add_files(file:string[], where?:string[]);
 		add_files(file:string[], where?:string);
+	}
+
+	interface BundleOptions {
+		type: string;
+		path: string;
+		data: any;
+		where: string[];
+	}
+
+	interface Bundle {
+		add_resource(options:BundleOptions);
+		error(diagnostics:string);
 	}
 
 }
@@ -240,52 +244,6 @@ interface IMongoSelector {
 }
 
 // COLLECTION --------------------
-
-declare enum ICollectionIdGenerationEnum {
-	STRING,
-	MONGO
-}
-
-interface ICollectionOptions {
-	connection:any;
-	idGeneration:ICollectionIdGenerationEnum;
-	transform?:(document)=>any;
-}
-
-interface ICollection<T> {
-
-	ObjectID(hexString?);
-
-	find(selector?:string, options?):ICursor<T>;
-	find(selector:IMongoSelector, options?):ICursor<T>;
-
-	findOne(selector:string, options?):T;
-	findOne(selector:IMongoSelector, options?):T;
-
-	insert(doc:T, callback?);
-
-	update(selector:string, modifier, options?, callback?);
-	update(selector:IMongoSelector, modifier, options?, callback?);
-
-	remove(selector:string, callback?);
-	remove(selector:IMongoSelector, callback?);
-
-	allow(options);
-	deny(options);
-
-}
-
-interface ICursor<T> {
-
-	forEach(callback:Function);
-	map(callback:Function);
-	fetch():Array<T>;
-	count():number;
-	rewind():void;
-	observe(callbacks);
-	observeChanges(callbacks);
-
-}
 
 // SESSION -----------
 
@@ -478,5 +436,65 @@ declare module Meteor {
 		failed,
 		waiting,
 		offline
+	}
+
+	declare enum ICollectionIdGenerationEnum {
+		STRING,
+		MONGO
+	}
+
+	interface ICollectionOptions {
+		connection:any;
+		idGeneration:ICollectionIdGenerationEnum;
+		transform?:(document)=>any;
+	}
+
+	interface ICollection<T> {
+
+		ObjectID(hexString?);
+
+		find(selector?:string, options?):ICursor<T>;
+		find(selector:IMongoSelector, options?):ICursor<T>;
+
+		findOne(selector:string, options?):T;
+		findOne(selector:IMongoSelector, options?):T;
+
+		insert(doc:T, callback?);
+
+		update(selector:string, modifier, options?, callback?);
+		update(selector:IMongoSelector, modifier, options?, callback?);
+
+		remove(selector:string, callback?);
+		remove(selector:IMongoSelector, callback?);
+
+		allow(options);
+		deny(options);
+
+	}
+
+	interface ICursor<T> {
+
+		forEach(callback:Function);
+		map(callback:Function);
+		fetch():Array<T>;
+		count():number;
+		rewind():void;
+		observe(callbacks);
+		observeChanges(callbacks);
+
+	}
+
+	interface IEventHandler {
+		type:string;
+		target:HTMLElement;
+		currentTarget:HTMLElement;
+		which: number;
+		stopPropagation():void;
+		stopImmediatePropagation():void;
+		preventDefault():void;
+		isPropagationStopped():boolean;
+		isImmediatePropagationStopped():boolean;
+		isDefaultPrevented():boolean;
+
 	}
 }
