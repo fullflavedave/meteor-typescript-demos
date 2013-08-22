@@ -34,44 +34,41 @@ interface Bundle {
 	error(diagnostics:string);
 }
 
-interface Api {
-	use(deps:string[], where?:string[]);
-	use(deps:string[], where?:string);
-	add_files(file:string, where?:string[]);
-	add_files(file:string, where?:string);
-	add_files(file:string[], where?:string[]);
-	add_files(file:string[], where?:string);
-}
-
 // PACKAGE --------------------
 
-interface PackageDescribeAPI {
-	summary: string;
+declare module Package {
+
+	function describe(metadata:PackageDescribeAPI);
+
+	function on_use(func:{(api:Api, where?:string[]):void});
+
+	function on_use(func:{(api:Api, where?:string):void});
+
+	function on_test(func:{(api:Api):void}) ;
+
+	function register_extension(extension:string, options:PackageRegisterExtensionOptions);
+
+	interface PackageRegisterExtensionOptions {(bundle:Bundle, source_path:string, serve_path:string, where?:string[]):void}
+	interface PackageDescribeAPI {
+		summary: string;
+	}
+
+	interface Api {
+		use(deps:string[], where?:string[]);
+		use(deps:string[], where?:string);
+		add_files(file:string, where?:string[]);
+		add_files(file:string, where?:string);
+		add_files(file:string[], where?:string[]);
+		add_files(file:string[], where?:string);
+	}
+
 }
-
-interface PackageRegisterExtensionFunction {(bundle:Bundle, source_path:string, serve_path:string, where?:string[]):void}
-
-interface Package {
-
-	describe(metadata:PackageDescribeAPI);
-
-	on_use(func:{(api:Api, where?:string[]):void});
-
-	on_use(func:{(api:Api, where?:string):void});
-
-	on_test(func:{(api:Api):void}) ;
-
-	register_extension(extension:string, callback:PackageRegisterExtensionFunction);
-
-}
-
-declare var Package:Package;
 
 // TINY TEST --------------------
 
 interface Tinytest {
 
-	add(name:string, func:{(test):void});
+	add(name:string, func:Function);
 }
 
 declare var Tinytest:Tinytest;
@@ -130,11 +127,11 @@ interface IHTTPResponse {
 }
 
 interface HTTP {
-	call(method:HTTPMethod, url:string, request:IHTTPRequest, callback?):IHTTPResponse;
-	get(url:string, request:IHTTPRequest, callback?):IHTTPResponse;
-	post(url:string, request:IHTTPRequest, callback?):IHTTPResponse;
-	put(url:string, request:IHTTPRequest, callback?):IHTTPResponse;
-	del(url:string, request:IHTTPRequest, callback?):IHTTPResponse;
+	call(method:HTTPMethod, url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
+	get(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
+	post(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
+	put(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
+	del(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
 }
 declare var HTTP:HTTP;
 
@@ -161,13 +158,15 @@ declare var Email:Email;
 // Assets -----------
 interface Assets {
 
-	getText(assetPath:string, callback?):string;
-	getBinary(assetPath:string, callback?):EJSON;
+	getText(assetPath:string, callback?:Function):string;
+	getBinary(assetPath:string, callback?:Function):EJSON;
 
 }
 declare var Assets:Assets;
 
 // Match ------------
+export function check(value:any, pattern:any);
+
 interface Match {
 	test(value, pattern)
 	Any;
@@ -234,14 +233,6 @@ interface IUser {
 	services:{ [id:string]:any };
 }
 
-interface IHtmlFunction {
-	():string;
-}
-
-interface IDocFunction {
-	(doc:{[id:string]:any}):string;
-}
-
 // MONGO ----------------
 
 interface IMongoSelector {
@@ -286,8 +277,8 @@ interface ICollection<T> {
 
 interface ICursor<T> {
 
-	forEach(callback);
-	map(callback);
+	forEach(callback:Function);
+	map(callback:Function);
 	fetch():Array<T>;
 	count():number;
 	rewind():void;
@@ -317,17 +308,17 @@ interface Accounts {
 	ui;
 
 	config(options);
-	validateNewUser(func);
-	onCreateUser(func);
-	createUser(options, callback);
-	changePassword(oldPassword, newPassword, callback);
-	forgotPassword(options, callback);
-	resetPassword(token, newPassword, callback);
-	setPassword(userId, newPassword);
-	verifyEmail(token, callback);
-	sendResetPasswordEmail(userId, email);
-	sendEnrollmentEmail(userId, email?);
-	sendVerificationEmail(userId, email);
+	validateNewUser(func:Function);
+	onCreateUser(func:Function);
+	createUser(options, callback:Function);
+	changePassword(oldPassword:string, newPassword:string, callback:Function);
+	forgotPassword(options, callback:Function);
+	resetPassword(token, newPassword:string, callback:Function);
+	setPassword(userId:string, newPassword:string);
+	verifyEmail(token, callback:Function);
+	sendResetPasswordEmail(userId:string, email:string);
+	sendEnrollmentEmail(userId:string, email?:string);
+	sendVerificationEmail(userId:string, email:string);
 
 }
 
@@ -348,37 +339,24 @@ declare var Random:Random;
 
 declare module Meteor {
 
-
-	//Meteor.publish("counts-by-room", function (roomId) {
-//	foo: function () {
-//		var self:meteor.IPublishHandler = <meteor.IPublishHandler>this;
-//		console.log(self.userId);
-//		self.error(new Meteor.Error(123, "bug", "details"));
-//	}
-// );
-
 	var isClient:boolean;
 	var isServer:boolean;
 	var settings:{[id:string]:any};
 	var release:string;
 
-	function startup(func:{():void});
+	function apply(method:string, ...parameters):void;
 
 	function absoluteUrl(path:string, options?:IAbsoluteUrlOptions):string;
 
-	/**
-	 * Publish a record set.
-	 *
-	 * @param name Name of the attribute set. If null, the set has no name, and the record set is automatically sent to all connected clients.
-	 * @param func Function called on the server each time a client subscribes
-	 */
-	function publish(name:string, func):ICursor<any>[];
+	function call(method:string, ...parameters):void;
 
-	function user():IUser;
+	function clearTimeout(id:number);
 
-	function users():ICollection<IUser>;
+	function clearInterval(id:number);
 
-	function userId():string;
+	function check(value, pattern);
+
+	function disconnect();
 
 	function loggingIn():boolean;
 
@@ -388,35 +366,39 @@ declare module Meteor {
 
 	function loginWithExternalService(options, callback?);
 
-	function render(htmlFunc:IHtmlFunction);
-
-	function renderList(observable:ICursor<any>, docFunc:IDocFunction, elseFunc?:IHtmlFunction);
-
-	function setTimeout(func:()=>any, delay:number):number;
-
-	function clearTimeout(id:number);
-
-	function setInterval(func:()=>any, delay:number):number;
-
-	function clearInterval(id:number);
-
-	function check(value, pattern);
-
-	function subscribe(name, ...rest);
-
-	function call(method:string, ...parameters):void;
-
-	function apply(method:string, ...parameters):void;
-
 	function methods(IMeteorMethodsDictionary);
 
-	function status():Status;
+	function onReconnect();
+
+	/**
+	 * Publish a record set.
+	 *
+	 * @param name Name of the attribute set. If null, the set has no name, and the record set is automatically sent to all connected clients.
+	 * @param func Function called on the server each time a client subscribes
+	 */
+	function publish(name:string, func:Function):void;
+
+	function render(htmlFunc:Function);
+
+	function renderList(observable:ICursor<any>, docFunc:Function, elseFunc?:Function);
 
 	function reconnect();
 
-	function disconnect();
+	function setTimeout(func:Function, delay:number):number;
 
-	function onReconnect();
+	function startup(func:Function);
+
+	function setInterval(func:Function, delay:number):number;
+
+	function subscribe(name, ...rest);
+
+	function status():StatusEnum;
+
+	function user():IUser;
+
+	function users():ICollection<IUser>;
+
+	function userId():string;
 
 	class Error {
 		constructor(error:number, reason?:string, details?:string);
@@ -437,38 +419,44 @@ declare module Meteor {
 
 		findOne(selector:IMongoSelector, options?):T;
 
-		insert(doc:T, callback?);
+		insert(doc:T, callback?:Function);
 
-		update(selector:string, modifier, options?, callback?);
+		update(selector:string, modifier, options?, callback?:Function);
 
-		update(selector:IMongoSelector, modifier, options?, callback?);
+		update(selector:IMongoSelector, modifier, options?, callback?:Function);
 
-		remove(selector:string, callback?);
+		remove(selector:string, callback?:Function);
 
-		remove(selector:IMongoSelector, callback?);
+		remove(selector:IMongoSelector, callback?:Function);
 
 		allow(options);
 
 		deny(options);
 	}
 
+	//Meteor.publish("counts-by-room", function (roomId) {
+	//	foo: function () {
+	//		var self:meteor.IPublishHandler = <meteor.IPublishHandler>this;
+	//		console.log(self.userId);
+	//		self.error(new Meteor.Error(123, "bug", "details"));
+	//	}
+	// );
 	interface IPublishHandler {
 		userId:string;
 		added(collection, id, fields);
 		changed(collection, id, fields);
 		removed(collection, id);
 		ready();
-		onStop(func);
+		onStop(func:Function);
 		error(error);
 		stop();
 	}
 
-	enum Status {
-		connected,
-		connecting,
-		failed,
-		waiting,
-		offline
+	interface IMethodsHandler {
+		userId:string;
+		setUserId(userId:string):void;
+		isSimulation():boolean;
+		unblock():void;
 	}
 
 	interface IAbsoluteUrlOptions {
@@ -482,5 +470,13 @@ declare module Meteor {
 		// Override the default ROOT_URL from the server environment. For example: "http://foo.example.com"
 		rootUrl?:string;
 
+	}
+
+	enum StatusEnum {
+		connected,
+		connecting,
+		failed,
+		waiting,
+		offline
 	}
 }
