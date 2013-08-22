@@ -284,6 +284,8 @@ interface Accounts {
 //	config(options);
 //}
 
+// RANDOM -------------
+
 interface Random {
 
 	fraction():number;
@@ -294,6 +296,51 @@ interface Random {
 }
 
 declare var Random:Random;
+
+// TEMPLATE ----------
+
+interface ITemplate {
+	rendered:Function;
+	created:Function;
+	destroyed:Function;
+	events(eventMap:IEventMap):void;
+	helpers(helpers):void;
+	preserve(selectors):void;
+
+}
+
+interface IEventHandler {
+	type:string;
+	target:HTMLElement;
+	currentTarget:HTMLElement;
+	which: number;
+	stopPropagation():void;
+	stopImmediatePropagation():void;
+	preventDefault():void;
+	isPropagationStopped():boolean;
+	isImmediatePropagationStopped():boolean;
+	isDefaultPrevented():boolean;
+
+}
+
+interface TemplateInstance {
+	findAll(selector);
+	find(selector);
+	firstNode:HTMLElement;
+	lastNode:HTMLElement;
+	data:any;
+}
+
+interface IEventMap {
+	[id:string]: (event:IEventHandler, template:TemplateInstance) => boolean
+}
+
+interface Template {
+	[id:string]:ITemplate;
+}
+declare var Template:Template;
+
+// METEOR --------------
 
 declare module Meteor {
 
@@ -484,17 +531,4 @@ declare module Meteor {
 
 	}
 
-	interface IEventHandler {
-		type:string;
-		target:HTMLElement;
-		currentTarget:HTMLElement;
-		which: number;
-		stopPropagation():void;
-		stopImmediatePropagation():void;
-		preventDefault():void;
-		isPropagationStopped():boolean;
-		isImmediatePropagationStopped():boolean;
-		isDefaultPrevented():boolean;
-
-	}
 }
