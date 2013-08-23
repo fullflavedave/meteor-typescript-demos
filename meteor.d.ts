@@ -9,6 +9,8 @@ declare module Deps {
 
 	function flush():void;
 
+	function autorun(func:Function);
+
 	class Dependency {
 
 		depend(computation?):boolean;
@@ -21,9 +23,9 @@ declare module Deps {
 
 declare module Npm {
 
-	export function require(module:string);
+	function require(module:string);
 
-	export function depends(dependencies:{[id:string]:string});
+	function depends(dependencies:{[id:string]:string});
 }
 
 // PACKAGE --------------------
@@ -169,9 +171,10 @@ interface Assets {
 declare var Assets:Assets;
 
 // Match ------------
-export function check(value:any, pattern:any);
+declare function check(value:any, pattern:any);
 
 interface Match {
+
 	test(value, pattern)
 	Any;
 	Integer;
@@ -186,20 +189,24 @@ declare var Match:Match;
 // DDP ---------------------
 
 declare enum IStatus {
+
 	connected,
 	connecting,
 	failed,
 	waiting,
 	offline
+
 }
 
 interface IDDPStatus {
+
 	connected:boolean;
 	status:IStatus;
 	retryCount:number;
 	//To turn this into an interval until the next reconnection, use retryTime - (new Date()).getTime()
 	retryTime?:number;
 	reason?:string;
+
 }
 
 interface IDDP {
@@ -224,8 +231,10 @@ declare var DDP:DDP;
 // DDP ---------------------
 
 interface IUserEmail {
+
 	address:string;
 	verified:boolean;
+
 }
 
 interface IUser {
@@ -235,12 +244,6 @@ interface IUser {
 	createdAt: number;
 	profile: { [id:string]:any };
 	services:{ [id:string]:any };
-}
-
-// MONGO ----------------
-
-interface IMongoSelector {
-	[id:string]:any
 }
 
 // COLLECTION --------------------
@@ -289,9 +292,30 @@ interface Accounts {
 interface Random {
 
 	fraction():number;
-	hexString(digits:number):string;
+
+	/**
+	 *
+	 * @param numberOfDigits
+	 * @returns a random hex string of the given length
+	 */
+	hexString(numberOfDigits:number):string;
+
+	/**
+	 * @returns an id
+	 */
 	id():string;
-	choice(arrayOrString:string[]):string;
+	/**
+	 *
+	 * @param array
+	 * @return a random element in array
+	 */
+	choice(array:any[]):string;
+	/**
+	 *
+	 * @param str
+	 * @return a random char in str
+	 */
+	choice(str:string):string;
 
 }
 
@@ -303,13 +327,13 @@ interface ITemplate {
 	rendered:Function;
 	created:Function;
 	destroyed:Function;
-	events(eventMap:IEventMap):void;
+	events(eventMap:EventMap):void;
 	helpers(helpers):void;
 	preserve(selectors):void;
 
 }
 
-interface IEventHandler {
+interface EventHandler {
 	type:string;
 	target:HTMLElement;
 	currentTarget:HTMLElement;
@@ -320,7 +344,6 @@ interface IEventHandler {
 	isPropagationStopped():boolean;
 	isImmediatePropagationStopped():boolean;
 	isDefaultPrevented():boolean;
-
 }
 
 interface TemplateInstance {
@@ -331,8 +354,12 @@ interface TemplateInstance {
 	data:any;
 }
 
-interface IEventMap {
-	[id:string]: (event:IEventHandler, template:TemplateInstance) => boolean
+interface EventMapFunction extends Function {
+	(event?:EventHandler, template?:TemplateInstance):any;
+}
+
+interface EventMap {
+	[id:string]:EventMapFunction;
 }
 
 interface Template {
@@ -414,25 +441,17 @@ declare module Meteor {
 
 		constructor(name:string, options?:ICollectionOptions);
 
-		ObjectID(hexString?);
+		ObjectID(hexString?:any);
 
-		find(selector?:string, options?):ICursor<T>;
+		find(selector?:any, options?):ICursor<T>;
 
-		find(selector:IMongoSelector, options?):ICursor<T>;
-
-		findOne(selector:string, options?):T;
-
-		findOne(selector:IMongoSelector, options?):T;
+		findOne(selector:any, options?):T;
 
 		insert(doc:T, callback?:Function);
 
-		update(selector:string, modifier, options?, callback?:Function);
+		update(selector:any, modifier, options?, callback?:Function);
 
-		update(selector:IMongoSelector, modifier, options?, callback?:Function);
-
-		remove(selector:string, callback?:Function);
-
-		remove(selector:IMongoSelector, callback?:Function);
+		remove(selector:any, callback?:Function);
 
 		allow(options);
 
@@ -498,23 +517,20 @@ declare module Meteor {
 
 	interface ICollection<T> {
 
-		ObjectID(hexString?);
+		ObjectID(hexString?:string);
 
-		find(selector?:string, options?):ICursor<T>;
-		find(selector:IMongoSelector, options?):ICursor<T>;
+		find(selector?:any, options?):ICursor<T>;
 
-		findOne(selector:string, options?):T;
-		findOne(selector:IMongoSelector, options?):T;
+		findOne(selector:any, options?):T;
 
 		insert(doc:T, callback?);
 
-		update(selector:string, modifier, options?, callback?);
-		update(selector:IMongoSelector, modifier, options?, callback?);
+		update(selector:any, modifier, options?, callback?:Function);
 
-		remove(selector:string, callback?);
-		remove(selector:IMongoSelector, callback?);
+		remove(selector:any, callback?:Function);
 
 		allow(options);
+
 		deny(options);
 
 	}
