@@ -48,6 +48,8 @@ declare module Package {
 	}
 
 	interface Api {
+		export(variable:string);
+		export(variables:string[]);
 		use(deps:string[], where?:string[]);
 		use(deps:string[], where?:string);
 		add_files(file:string, where?:string[]);
@@ -303,7 +305,6 @@ interface Random {
 }
 
 declare var Random:Random;
-
 
 // METEOR --------------
 
