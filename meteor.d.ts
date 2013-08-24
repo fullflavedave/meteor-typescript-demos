@@ -118,7 +118,7 @@ declare module HTTP {
 
 	function del(url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
 
-	declare enum HTTPMethodEnum {
+	 enum HTTPMethodEnum {
 		GET,
 		POST,
 		PUT,
