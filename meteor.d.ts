@@ -504,7 +504,7 @@ declare module Meteor {
 		offline
 	}
 
-	declare enum ICollectionIdGenerationEnum {
+	enum ICollectionIdGenerationEnum {
 		STRING,
 		MONGO
 	}

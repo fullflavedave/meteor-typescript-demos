@@ -1,5 +1,6 @@
-///<reference path="meteor.d.ts"/>
-///<reference path="../collections.ts"/>
+///<reference path="../../lib.d.ts"/>
+///<reference path="../../meteor.d.ts"/>
+///<reference path="../collections.d.ts"/>
 
 // Lists -- {name: String}
 
