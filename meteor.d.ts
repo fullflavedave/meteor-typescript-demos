@@ -304,12 +304,6 @@ interface Random {
 
 declare var Random:Random;
 
-// TEMPLATE ----------
-
-interface ITemplate {
-	[id:string]:ITemplate;
-}
-declare var Template:Meteor.Template;
 
 // METEOR --------------
 
@@ -390,7 +384,6 @@ declare module Meteor {
 
 	}
 
-//	interface Collection implements Collection {
 	class Collection<T> {
 
 		constructor(name:string, options?:CollectionOptions);
@@ -414,6 +407,7 @@ declare module Meteor {
 
 	//Meteor.publish("counts-by-room", function (roomId) {
 	//	foo: function () {
+	//      // until TS provides a way to hook this:any
 	//		var self:meteor.IPublishHandler = <meteor.IPublishHandler>this;
 	//		console.log(self.userId);
 	//		self.error(new Meteor.Error(123, "bug", "details"));
@@ -482,6 +476,11 @@ declare module Meteor {
 	}
 
 	// TEMPLATE ------
+
+	interface TemplateDico {
+		[id:string]:Template;
+	}
+
 	interface Template {
 		rendered:Function;
 		created:Function;
@@ -541,3 +540,8 @@ declare module Meteor {
 
 	}
 }
+
+// TEMPLATE ----------
+
+declare var Template:Meteor.TemplateDico;
+
