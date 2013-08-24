@@ -371,9 +371,9 @@ declare module Meteor {
 
 	function status():StatusEnum;
 
-	function user():IUser;
+	function user():User;
 
-	function users():Collection<IUser>;
+	function users():Collection<User>;
 
 	function userId():string;
 
