@@ -7,11 +7,11 @@ interface TodoDAO {
     list_id: string;
     timestamp: number;
 }
-declare var Todos: Meteor.ICollection<TodoDAO>;
+declare var Todos: Meteor.Collection<TodoDAO>;
 
 interface ListDAO {
     _id?: string;
     name: string;
 }
 
-declare var Lists: Meteor.ICollection<ListDAO>;
+declare var Lists: Meteor.Collection<ListDAO>;

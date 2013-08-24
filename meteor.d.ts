@@ -107,59 +107,60 @@ declare var EJSON:EJSON;
 
 // HTTP ---------------
 
-declare enum HTTPMethod {
-	GET,
-	POST,
-	PUT,
-	DELETE
-}
+declare module HTTP {
+	function call(method:HTTPMethodEnum, url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
 
-interface IHTTPRequest {
-	content:string;
-	data:any;
-	query:string;
-	params:{[id:string]:string};
-	auth:string;
-	headers:{[id:string]:string};
-	timeout:number;
-	followRedirects:boolean;
-}
+	function get(url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
 
-interface IHTTPResponse {
-	statusCode:number;
-	content:string;
-	data:any;
-	headers:{[id:string]:string};
-}
+	function post(url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
 
-interface HTTP {
-	call(method:HTTPMethod, url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
-	get(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
-	post(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
-	put(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
-	del(url:string, request:IHTTPRequest, callback?:Function):IHTTPResponse;
+	function put(url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
+
+	function del(url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
+
+	declare enum HTTPMethodEnum {
+		GET,
+		POST,
+		PUT,
+		DELETE
+	}
+
+	interface HTTPRequest {
+		content:string;
+		data:any;
+		query:string;
+		params:{[id:string]:string};
+		auth:string;
+		headers:{[id:string]:string};
+		timeout:number;
+		followRedirects:boolean;
+	}
+
+	interface HTTPResponse {
+		statusCode:number;
+		content:string;
+		data:any;
+		headers:{[id:string]:string};
+	}
 }
-declare var HTTP:HTTP;
 
 // Email -----------
 
-interface IEmailMessage {
-	from:string;
-	to:string[];
-	cc?:string[];
-	bcc?:string[];
-	replyTo:string[];
-	subject:string;
-	text?:string;
-	html?:string;
-	headers?:{[id:string]:string};
-}
+declare module Email {
+	function send(msg:EmailMessage);
 
-interface Email {
-	send(msg:IEmailMessage);
+	interface EmailMessage {
+		from:string;
+		to:string[];
+		cc?:string[];
+		bcc?:string[];
+		replyTo:string[];
+		subject:string;
+		text?:string;
+		html?:string;
+		headers?:{[id:string]:string};
+	}
 }
-
-declare var Email:Email;
 
 // Assets -----------
 interface Assets {
@@ -228,7 +229,7 @@ interface DDP {
 
 declare var DDP:DDP;
 
-// DDP ---------------------
+// USER ---------------------
 
 interface IUserEmail {
 
@@ -238,12 +239,14 @@ interface IUserEmail {
 }
 
 interface IUser {
+
 	_id:string;
 	username:string;
 	emails:IUserEmail[];
 	createdAt: number;
 	profile: { [id:string]:any };
 	services:{ [id:string]:any };
+
 }
 
 // COLLECTION --------------------
@@ -282,6 +285,7 @@ interface Accounts {
 	sendVerificationEmail(userId:string, email:string);
 
 }
+declare var Account:Account;
 
 //declare module Accounts.ui {
 //	config(options);
@@ -324,48 +328,9 @@ declare var Random:Random;
 // TEMPLATE ----------
 
 interface ITemplate {
-	rendered:Function;
-	created:Function;
-	destroyed:Function;
-	events(eventMap:EventMap):void;
-	helpers(helpers):void;
-	preserve(selectors):void;
-
+	[id:string]:Template;
 }
-
-interface EventHandler {
-	type:string;
-	target:HTMLElement;
-	currentTarget:HTMLElement;
-	which: number;
-	stopPropagation():void;
-	stopImmediatePropagation():void;
-	preventDefault():void;
-	isPropagationStopped():boolean;
-	isImmediatePropagationStopped():boolean;
-	isDefaultPrevented():boolean;
-}
-
-interface TemplateInstance {
-	findAll(selector);
-	find(selector);
-	firstNode:HTMLElement;
-	lastNode:HTMLElement;
-	data:any;
-}
-
-interface EventMapFunction extends Function {
-	(event?:EventHandler, template?:TemplateInstance):any;
-}
-
-interface EventMap {
-	[id:string]:EventMapFunction;
-}
-
-interface Template {
-	[id:string]:ITemplate;
-}
-declare var Template:Template;
+declare var Template:ITemplate;
 
 // METEOR --------------
 
@@ -378,7 +343,7 @@ declare module Meteor {
 
 	function apply(method:string, ...parameters):void;
 
-	function absoluteUrl(path:string, options?:IAbsoluteUrlOptions):string;
+	function absoluteUrl(path:string, options?:AbsoluteUrlOptions):string;
 
 	function call(method:string, ...parameters):void;
 
@@ -412,7 +377,7 @@ declare module Meteor {
 
 	function render(htmlFunc:Function);
 
-	function renderList(observable:ICursor<any>, docFunc:Function, elseFunc?:Function);
+	function renderList(observable:Cursor<any>, docFunc:Function, elseFunc?:Function);
 
 	function reconnect();
 
@@ -428,7 +393,7 @@ declare module Meteor {
 
 	function user():IUser;
 
-	function users():ICollection<IUser>;
+	function users():Collection<IUser>;
 
 	function userId():string;
 
@@ -436,14 +401,14 @@ declare module Meteor {
 		constructor(error:number, reason?:string, details?:string);
 	}
 
-//	interface Collection implements ICollection {
-	class Collection<T> implements ICollection<T> {
+//	interface Collection implements Collection {
+	class Collection<T> {
 
-		constructor(name:string, options?:ICollectionOptions);
+		constructor(name:string, options?:CollectionOptions);
 
 		ObjectID(hexString?:any);
 
-		find(selector?:any, options?):ICursor<T>;
+		find(selector?:any, options?):Cursor<T>;
 
 		findOne(selector:any, options?):T;
 
@@ -465,7 +430,7 @@ declare module Meteor {
 	//		self.error(new Meteor.Error(123, "bug", "details"));
 	//	}
 	// );
-	interface IPublishHandler {
+	interface PublishHandler {
 		userId:string;
 		added(collection, id, fields);
 		changed(collection, id, fields);
@@ -476,14 +441,14 @@ declare module Meteor {
 		stop();
 	}
 
-	interface IMethodsHandler {
+	interface MethodsHandler {
 		userId:string;
 		setUserId(userId:string):void;
 		isSimulation():boolean;
 		unblock():void;
 	}
 
-	interface IAbsoluteUrlOptions {
+	interface AbsoluteUrlOptions {
 
 		// Create an HTTPS URL.
 		secure?:boolean;
@@ -504,38 +469,18 @@ declare module Meteor {
 		offline
 	}
 
-	enum ICollectionIdGenerationEnum {
+	enum CollectionIdGenerationEnum {
 		STRING,
 		MONGO
 	}
 
-	interface ICollectionOptions {
+	interface CollectionOptions {
 		connection:any;
-		idGeneration:ICollectionIdGenerationEnum;
+		idGeneration:CollectionIdGenerationEnum;
 		transform?:(document)=>any;
 	}
 
-	interface ICollection<T> {
-
-		ObjectID(hexString?:string);
-
-		find(selector?:any, options?):ICursor<T>;
-
-		findOne(selector:any, options?):T;
-
-		insert(doc:T, callback?);
-
-		update(selector:any, modifier, options?, callback?:Function);
-
-		remove(selector:any, callback?:Function);
-
-		allow(options);
-
-		deny(options);
-
-	}
-
-	interface ICursor<T> {
+	interface Cursor<T> {
 
 		forEach(callback:Function);
 		map(callback:Function);
@@ -545,6 +490,46 @@ declare module Meteor {
 		observe(callbacks);
 		observeChanges(callbacks);
 
+	}
+
+	// TEMPLATE ------
+	interface Template {
+		rendered:Function;
+		created:Function;
+		destroyed:Function;
+		events(eventMap:EventMap):void;
+		helpers(helpers):void;
+		preserve(selectors):void;
+
+	}
+
+	interface EventHandler {
+		type:string;
+		target:HTMLElement;
+		currentTarget:HTMLElement;
+		which: number;
+		stopPropagation():void;
+		stopImmediatePropagation():void;
+		preventDefault():void;
+		isPropagationStopped():boolean;
+		isImmediatePropagationStopped():boolean;
+		isDefaultPrevented():boolean;
+	}
+
+	interface TemplateInstance {
+		findAll(selector);
+		find(selector);
+		firstNode:HTMLElement;
+		lastNode:HTMLElement;
+		data:any;
+	}
+
+	interface EventMapFunction extends Function {
+		(event?:EventHandler, template?:TemplateInstance):any;
+	}
+
+	interface EventMap {
+		[id:string]:EventMapFunction;
 	}
 
 }
