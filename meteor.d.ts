@@ -118,7 +118,7 @@ declare module HTTP {
 
 	function del(url:string, request:HTTPRequest, callback?:Function):HTTPResponse;
 
-	 enum HTTPMethodEnum {
+	enum HTTPMethodEnum {
 		GET,
 		POST,
 		PUT,
@@ -189,45 +189,44 @@ declare var Match:Match;
 
 // DDP ---------------------
 
-declare enum IStatus {
+declare module DDP {
 
-	connected,
-	connecting,
-	failed,
-	waiting,
-	offline
+	interface DDPStatic {
+
+		subscribe(name, ...rest);
+		call(method:string, ...parameters):void;
+		apply(method:string, ...parameters):void;
+		methods(IMeteorMethodsDictionary);
+		status():DDPStatus;
+		reconnect();
+		disconnect();
+		onReconnect();
+	}
+
+	enum DDPStatusEnum {
+
+		connected,
+		connecting,
+		failed,
+		waiting,
+		offline
+
+	}
+
+	interface DDPStatus {
+
+		connected:boolean;
+		status:DDPStatusEnum;
+		retryCount:number;
+		//To turn this into an interval until the next reconnection, use retryTime - (new Date()).getTime()
+		retryTime?:number;
+		reason?:string;
+
+	}
+
+	function connect(url:string):DDPStatic;
 
 }
-
-interface IDDPStatus {
-
-	connected:boolean;
-	status:IStatus;
-	retryCount:number;
-	//To turn this into an interval until the next reconnection, use retryTime - (new Date()).getTime()
-	retryTime?:number;
-	reason?:string;
-
-}
-
-interface IDDP {
-
-	subscribe(name, ...rest);
-	call(method:string, ...parameters):void;
-	apply(method:string, ...parameters):void;
-	methods(IMeteorMethodsDictionary);
-	status():IDDPStatus;
-	reconnect();
-	disconnect();
-	onReconnect();
-}
-
-interface DDP {
-	connect(url:string):IDDP;
-
-}
-
-declare var DDP:DDP;
 
 // COLLECTION --------------------
 
