@@ -481,7 +481,7 @@ declare module Meteor {
 	}
 
 	interface Cursor<T> {
-
+		():Cursor<T>;
 		forEach(callback:Function);
 		map(callback:Function);
 		fetch():Array<T>;
