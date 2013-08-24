@@ -285,7 +285,7 @@ interface Accounts {
 	sendVerificationEmail(userId:string, email:string);
 
 }
-declare var Account:Account;
+declare var Accounts:Accounts;
 
 //declare module Accounts.ui {
 //	config(options);
@@ -328,9 +328,9 @@ declare var Random:Random;
 // TEMPLATE ----------
 
 interface ITemplate {
-	[id:string]:Template;
+	[id:string]:ITemplate;
 }
-declare var Template:ITemplate;
+declare var Template:Meteor.Template;
 
 // METEOR --------------
 
