@@ -176,7 +176,7 @@ Template['todos']['todos'] = function():Meteor.Cursor<TodoDAO> {
 
 	var list_id = Session.get('list_id');
 	if (!list_id)
-		return Meteor.Cursor();
+		return <Meteor.Cursor<TodoDAO>>{};
 
 	var selector:any = {list_id: list_id};
 	var tag_filter = Session.get('tag_filter');

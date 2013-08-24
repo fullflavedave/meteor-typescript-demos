@@ -1,4 +1,4 @@
-///<reference path="../../lib.d.ts"/>
+///<reference path="../../ecma.d.ts"/>
 ///<reference path="../../meteor.d.ts"/>
 ///<reference path="../collections.d.ts"/>
 

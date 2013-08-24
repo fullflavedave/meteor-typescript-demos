@@ -229,26 +229,6 @@ interface DDP {
 
 declare var DDP:DDP;
 
-// USER ---------------------
-
-interface IUserEmail {
-
-	address:string;
-	verified:boolean;
-
-}
-
-interface IUser {
-
-	_id:string;
-	username:string;
-	emails:IUserEmail[];
-	createdAt: number;
-	profile: { [id:string]:any };
-	services:{ [id:string]:any };
-
-}
-
 // COLLECTION --------------------
 
 // SESSION -----------
@@ -343,7 +323,7 @@ declare module Meteor {
 
 	function apply(method:string, ...parameters):void;
 
-	function absoluteUrl(path:string, options?:AbsoluteUrlOptions):string;
+	function absoluteUrl(path?:string, options?:AbsoluteUrlOptions):string;
 
 	function call(method:string, ...parameters):void;
 
@@ -401,6 +381,16 @@ declare module Meteor {
 		constructor(error:number, reason?:string, details?:string);
 	}
 
+	interface AllowDenyOptions {
+
+		insert?: (userId:string, doc) => boolean;
+		update?: (userId, doc, fieldNames, modifier) => boolean;
+		remove?: (userId, doc) => boolean;
+		fetch?: string[];
+		transform?: Function;
+
+	}
+
 //	interface Collection implements Collection {
 	class Collection<T> {
 
@@ -410,7 +400,7 @@ declare module Meteor {
 
 		find(selector?:any, options?):Cursor<T>;
 
-		findOne(selector:any, options?):T;
+		findOne(selector, options?):T;
 
 		insert(doc:T, callback?:Function);
 
@@ -418,7 +408,7 @@ declare module Meteor {
 
 		remove(selector:any, callback?:Function);
 
-		allow(options);
+		allow(options:AllowDenyOptions);
 
 		deny(options);
 	}
@@ -481,7 +471,7 @@ declare module Meteor {
 	}
 
 	interface Cursor<T> {
-		():Cursor<T>;
+
 		forEach(callback:Function);
 		map(callback:Function);
 		fetch():Array<T>;
@@ -532,4 +522,23 @@ declare module Meteor {
 		[id:string]:EventMapFunction;
 	}
 
+	// USER ---------------------
+
+	interface UserEmail {
+
+		address:string;
+		verified:boolean;
+
+	}
+
+	interface User {
+
+		_id:string;
+		username:string;
+		emails:UserEmail[];
+		createdAt: number;
+		profile: any;
+		services: any;
+
+	}
 }
