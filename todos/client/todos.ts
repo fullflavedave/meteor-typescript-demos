@@ -262,7 +262,7 @@ Template['todo_item'].events(okCancelEvents(
 	'#edittag-input',
 	{
 		ok: function(value) {
-			Todos.update(this._id, {$addToSet: {tags: value.toString}});
+			Todos.update(this._id, {$addToSet: {tags: value}});
 			Session.set('editing_addtag', null);
 		},
 		cancel: function() {
