@@ -314,6 +314,7 @@ declare module Meteor {
 	var isServer:boolean;
 	var settings:{[id:string]:any};
 	var release:string;
+	var users:Collection<User>;
 
 	function apply(method:string, ...parameters):void;
 

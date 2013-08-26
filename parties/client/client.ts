@@ -1,3 +1,7 @@
+// <reference path="../../lib.d.ts" />
+// <reference path="../../meteor.d.ts" />
+// <reference path="../model.ts" />
+
 // All Tomorrow's Parties -- client
 
 Meteor.subscribe("directory");
@@ -122,7 +126,7 @@ Template.map.events({
   }
 });
 
-Template.map.rendered = function () {
+Template['map'].rendered = function () {
   var self = this;
   self.node = self.find("svg");
 
@@ -135,7 +139,7 @@ Template.map.rendered = function () {
       };
 
       // Draw a circle for each party
-      var updateCircles = function (group) {
+      var updateCircles = function (group:HTMLElement) {
         group.attr("id", function (party) { return party._id; })
         .attr("cx", function (party) { return party.x * 500; })
         .attr("cy", function (party) { return party.y * 500; })

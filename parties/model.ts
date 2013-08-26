@@ -102,10 +102,13 @@ Meteor.methods({
 	},
 
 	invite: function(partyId:string, userId:string) {
+
+		var self:Meteor.MethodsHandler = this;
+
 		check(partyId, String);
 		check(userId, String);
 		var party = Parties.findOne(partyId);
-		if (!party || party.owner !== this.userId)
+		if (!party || party.owner !== self.userId)
 			throw new Meteor.Error(404, "No such party");
 		if (party.public)
 			throw new Meteor.Error(400,
@@ -113,12 +116,12 @@ Meteor.methods({
 		if (userId !== party.owner && !_.contains(party.invited, userId)) {
 			Parties.update(partyId, { $addToSet: { invited: userId } });
 
-			var from = contactEmail(Meteor.users.findOne(this.userId));
+			var from = contactEmail(Meteor.users.findOne(self.userId));
 			var to = contactEmail(Meteor.users.findOne(userId));
 			if (Meteor.isServer && to) {
 				// This code only runs on the server. If you didn't want clients
 				// to be able to see it, you could move it to a separate file.
-				Email.send({
+				Email.send(<Meteor.EmailMessage>{
 					from: "noreply@example.com",
 					to: to,
 					replyTo: from || undefined,
@@ -187,7 +190,7 @@ var displayName = function(user:Meteor.User):string {
 var contactEmail = function(user:Meteor.User):string {
 	if (user.emails && user.emails.length)
 		return user.emails[0].address;
-	if (user.services && user.services.facebook && user.services.facebook.email)
-		return user.services.facebook.email;
+	if (user.services && user.services['facebook'] && user.services['facebook'].email)
+		return user.services['facebook'].email;
 	return null;
 };
