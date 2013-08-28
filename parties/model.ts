@@ -1,5 +1,6 @@
 /// <reference path="../meteor.d.ts"/>
 /// <reference path="../underscore.d.ts"/>
+/// <reference path="model.d.ts"/>
 
 // All Tomorrow's Parties -- data model
 // Loaded on both the client and the server
@@ -17,21 +18,10 @@
  rsvps: Array of objects like {user: userId, rsvp: "yes"} (or "no"/"maybe")
  */
 
-interface PartyDAO {
+var attending = function(party) {
+	return (_.groupBy(party.rsvps, 'rsvp')['yes'] || []).length;
+};
 
-	_id?: string;
-	owner?: string;
-	x?: number;
-	y?: number;
-	title?: string;
-	description?: string;
-	public?: boolean;
-	invited?: Array;
-	rsvps?: Array;
-
-}
-
-declare var Parties:Meteor.Collection<PartyDAO>;
 Parties = new Meteor.Collection<PartyDAO>("parties");
 
 Parties.allow({
@@ -56,10 +46,6 @@ Parties.allow({
 		return party.owner === userId && attending(party) === 0;
 	}
 });
-
-attending = function(party) {
-	return (_.groupBy(party.rsvps, 'rsvp').yes || []).length;
-};
 
 var NonEmptyString = Match.Where(function(x) {
 	check(x, String);
@@ -116,12 +102,12 @@ Meteor.methods({
 		if (userId !== party.owner && !_.contains(party.invited, userId)) {
 			Parties.update(partyId, { $addToSet: { invited: userId } });
 
-			var from = contactEmail(Meteor.users.findOne(self.userId));
-			var to = contactEmail(Meteor.users.findOne(userId));
+			var from:string = contactEmail(Meteor.users.findOne(self.userId));
+			var to:string = contactEmail(Meteor.users.findOne(userId));
 			if (Meteor.isServer && to) {
 				// This code only runs on the server. If you didn't want clients
 				// to be able to see it, you could move it to a separate file.
-				Email.send(<Meteor.EmailMessage>{
+				Email.send(<Email.EmailMessage>{
 					from: "noreply@example.com",
 					to: to,
 					replyTo: from || undefined,
@@ -177,7 +163,6 @@ Meteor.methods({
 
 ///////////////////////////////////////////////////////////////////////////////
 // Users
-
 
 // todo global
 var displayName = function(user:Meteor.User):string {

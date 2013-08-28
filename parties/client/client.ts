@@ -21,26 +21,26 @@ Meteor.startup(function () {
 ///////////////////////////////////////////////////////////////////////////////
 // Party details sidebar
 
-Template.details.party = function () {
+Template['details'].party = function () {
   return Parties.findOne(Session.get("selected"));
 };
 
-Template.details.anyParties = function () {
+Template['details'].anyParties = function () {
   return Parties.find().count() > 0;
 };
 
-Template.details.creatorName = function () {
+Template['details'].creatorName = function () {
   var owner = Meteor.users.findOne(this.owner);
   if (owner._id === Meteor.userId())
     return "me";
   return displayName(owner);
 };
 
-Template.details.canRemove = function () {
+Template['details'].canRemove = function () {
   return this.owner === Meteor.userId() && attending(this) === 0;
 };
 
-Template.details.maybeChosen = function (what) {
+Template['details'].maybeChosen = function (what) {
   var myRsvp = _.find(this.rsvps, function (r) {
     return r.user === Meteor.userId();
   }) || {};
@@ -48,7 +48,7 @@ Template.details.maybeChosen = function (what) {
   return what == myRsvp.rsvp ? "chosen btn-inverse" : "";
 };
 
-Template.details.events({
+Template['details'].events({
   'click .rsvp_yes': function () {
     Meteor.call("rsvp", Session.get("selected"), "yes");
     return false;
@@ -74,12 +74,12 @@ Template.details.events({
 ///////////////////////////////////////////////////////////////////////////////
 // Party attendance widget
 
-Template.attendance.rsvpName = function () {
+Template['attendance'].rsvpName = function () {
   var user = Meteor.users.findOne(this.user);
   return displayName(user);
 };
 
-Template.attendance.outstandingInvitations = function () {
+Template['attendance'].outstandingInvitations = function () {
   var party = Parties.findOne(this._id);
   return Meteor.users.find({$and: [
     {_id: {$in: party.invited}}, // they're invited
@@ -87,19 +87,19 @@ Template.attendance.outstandingInvitations = function () {
   ]});
 };
 
-Template.attendance.invitationName = function () {
+Template['attendance'].invitationName = function () {
   return displayName(this);
 };
 
-Template.attendance.rsvpIs = function (what) {
+Template['attendance'].rsvpIs = function (what) {
   return this.rsvp === what;
 };
 
-Template.attendance.nobody = function () {
+Template['attendance'].nobody = function () {
   return ! this.public && (this.rsvps.length + this.invited.length === 0);
 };
 
-Template.attendance.canInvite = function () {
+Template['attendance'].canInvite = function () {
   return ! this.public && this.owner === Meteor.userId();
 };
 
@@ -114,7 +114,7 @@ var coordsRelativeToElement = function (element, event) {
   return { x: x, y: y };
 };
 
-Template.map.events({
+Template['map'].events({
   'mousedown circle, mousedown text': function (event, template) {
     Session.set("selected", event.currentTarget.id);
   },
@@ -192,7 +192,7 @@ Template['map'].rendered = function () {
   }
 };
 
-Template.map.destroyed = function () {
+Template['map'].destroyed = function () {
   this.handle && this.handle.stop();
 };
 
@@ -205,11 +205,11 @@ var openCreateDialog = function (x, y) {
   Session.set("showCreateDialog", true);
 };
 
-Template.page.showCreateDialog = function () {
+Template['page'].showCreateDialog = function () {
   return Session.get("showCreateDialog");
 };
 
-Template.createDialog.events({
+Template['createDialog'].events({
   'click .save': function (event, template) {
     var title = template.find(".title").value;
     var description = template.find(".description").value;
@@ -242,7 +242,7 @@ Template.createDialog.events({
   }
 });
 
-Template.createDialog.error = function () {
+Template['createDialog'].error = function () {
   return Session.get("createError");
 };
 
@@ -253,11 +253,11 @@ var openInviteDialog = function () {
   Session.set("showInviteDialog", true);
 };
 
-Template.page.showInviteDialog = function () {
+Template['page'].showInviteDialog = function () {
   return Session.get("showInviteDialog");
 };
 
-Template.inviteDialog.events({
+Template['inviteDialog'].events({
   'click .invite': function (event, template) {
     Meteor.call('invite', Session.get("selected"), this._id);
   },
@@ -267,7 +267,7 @@ Template.inviteDialog.events({
   }
 });
 
-Template.inviteDialog.uninvited = function () {
+Template['inviteDialog'].uninvited = function () {
   var party = Parties.findOne(Session.get("selected"));
   if (! party)
     return []; // party hasn't loaded yet
@@ -275,6 +275,6 @@ Template.inviteDialog.uninvited = function () {
                                    {_id: party.owner}]});
 };
 
-Template.inviteDialog.displayName = function () {
+Template['inviteDialog'].displayName = function () {
   return displayName(this);
 };

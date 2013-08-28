@@ -153,10 +153,18 @@ declare module Email {
 
 	interface EmailMessage {
 		from:string;
-		to:string[];
-		cc?:string[];
-		bcc?:string[];
-		replyTo:string[];
+
+		// damn it, this should really be string ot string[]
+		to:any;
+
+		// damn it, this should really be string ot string[]
+		cc?:any;
+
+		// damn it, this should really be string ot string[]
+		bcc?:any;
+
+		// damn it, this should really be string ot string[]
+		replyTo:any;
 		subject:string;
 		text?:string;
 		html?:string;
@@ -368,7 +376,7 @@ declare module Meteor {
 
 	function user():User;
 
-	function users():Collection<User>;
+//	function users():Collection<User>;
 
 	function userId():string;
 
@@ -394,7 +402,7 @@ declare module Meteor {
 
 		find(selector?:any, options?):Cursor<T>;
 
-		findOne(selector, options?):T;
+		findOne(selector?, options?):T;
 
 		insert(doc:T, callback?:Function);
 
