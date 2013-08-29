@@ -108,7 +108,9 @@ Template['attendance'].canInvite = function () {
 // Map display
 
 // Use jquery to get the position clicked relative to the map element.
-var coordsRelativeToElement = function (element, event) {
+declare var coordsRelativeToElement:Function;
+
+coordsRelativeToElement = function (element, event) {
     var offset = $(element).offset();
     var x = event.pageX - offset.left;
     var y = event.pageY - offset.top;
@@ -218,7 +220,10 @@ Template['map'].destroyed = function () {
 ///////////////////////////////////////////////////////////////////////////////
 // Create Party dialog
 
-var openCreateDialog = function (x, y) {
+
+declare var openCreateDialog:Function;
+
+openCreateDialog = function (x, y) {
     Session.set("createCoords", {x: x, y: y});
     Session.set("createError", null);
     Session.set("showCreateDialog", true);
@@ -268,7 +273,9 @@ Template['createDialog'].error = function () {
 ///////////////////////////////////////////////////////////////////////////////
 // Invite dialog
 
-var openInviteDialog = function () {
+declare var openInviteDialog:Function;
+
+openInviteDialog = function () {
     Session.set("showInviteDialog", true);
 };
 
