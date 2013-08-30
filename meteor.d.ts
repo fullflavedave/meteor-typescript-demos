@@ -1,7 +1,8 @@
 /**
- *  Draft work - orefalo@yahoo.com
  *
- *
+ *  Meteor definitions for TypeScript
+ *  author - orefalo@yahoo.com
+ *  supports meteor 0.6.1.1
  *
  */
 
@@ -322,7 +323,7 @@ declare module Meteor {
 	var isServer:boolean;
 	var settings:{[id:string]:any};
 	var release:string;
-	var users:Collection<User>;
+	var users:Meteor.Collection<User>;
 
 	function apply(method:string, ...parameters):void;
 
@@ -360,7 +361,7 @@ declare module Meteor {
 
 	function render(htmlFunc:Function);
 
-	function renderList(observable:Cursor<any>, docFunc:Function, elseFunc?:Function);
+	function renderList(observable:Meteor.Cursor<any>, docFunc:Function, elseFunc?:Function);
 
 	function reconnect();
 
@@ -372,7 +373,7 @@ declare module Meteor {
 
 	function subscribe(name, ...rest);
 
-	function status():StatusEnum;
+	function status():Meteor.StatusEnum;
 
 	function user():User;
 
@@ -396,11 +397,11 @@ declare module Meteor {
 
 	class Collection<T> {
 
-		constructor(name:string, options?:CollectionOptions);
+		constructor(name:string, options?:Meteor.CollectionOptions);
 
 		ObjectID(hexString?:any);
 
-		find(selector?:any, options?):Cursor<T>;
+		find(selector?:any, options?):Meteor.Cursor<T>;
 
 		findOne(selector?, options?):T;
 
@@ -410,7 +411,7 @@ declare module Meteor {
 
 		remove(selector:any, callback?:Function);
 
-		allow(options:AllowDenyOptions);
+		allow(options:Meteor.AllowDenyOptions);
 
 		deny(options);
 	}
@@ -469,7 +470,7 @@ declare module Meteor {
 
 	interface CollectionOptions {
 		connection:any;
-		idGeneration:CollectionIdGenerationEnum;
+		idGeneration:Meteor.CollectionIdGenerationEnum;
 		transform?:(document)=>any;
 	}
 
@@ -488,14 +489,14 @@ declare module Meteor {
 	// TEMPLATE ------
 
 	interface TemplateDico {
-		[id:string]:Template;
+		[id:string]:Meteor.Template;
 	}
 
 	interface Template {
 		rendered:Function;
 		created:Function;
 		destroyed:Function;
-		events(eventMap:EventMap):void;
+		events(eventMap:Meteor.EventMap):void;
 		helpers(helpers):void;
 		preserve(selectors):void;
 
@@ -523,11 +524,11 @@ declare module Meteor {
 	}
 
 	interface EventMapFunction extends Function {
-		(event?:EventHandler, template?:TemplateInstance):any;
+		(event?:Meteor.EventHandler, template?:Meteor.TemplateInstance):any;
 	}
 
 	interface EventMap {
-		[id:string]:EventMapFunction;
+		[id:string]:Meteor.EventMapFunction;
 	}
 
 	// USER ---------------------
@@ -543,7 +544,7 @@ declare module Meteor {
 
 		_id:string;
 		username:string;
-		emails:UserEmail[];
+		emails:Meteor.UserEmail[];
 		createdAt: number;
 		profile: any;
 		services: any;

@@ -1,3 +1,9 @@
+///<reference path="../../lib.d.ts"/>
+///<reference path="../../meteor.d.ts"/>
+///<reference path="../model.d.ts"/>
+///<reference path="../../jquery.d.ts"/>
+///<reference path="../../underscore.d.ts"/>
+
 ////////// Main client application logic //////////
 
 //////
@@ -43,12 +49,12 @@ var clear_selected_positions = function () {
 ////// offers a button to start a fresh game.
 //////
 
-Template.lobby.show = function () {
+Template['lobby'].show = function () {
   // only show lobby if we're not in a game
   return !game();
 };
 
-Template.lobby.waiting = function () {
+Template['lobby'].waiting = function () {
   var players = Players.find({_id: {$ne: Session.get('player_id')},
                               name: {$ne: ''},
                               game_id: {$exists: false}});
@@ -56,7 +62,7 @@ Template.lobby.waiting = function () {
   return players;
 };
 
-Template.lobby.count = function () {
+Template['lobby'].count = function () {
   var players = Players.find({_id: {$ne: Session.get('player_id')},
                               name: {$ne: ''},
                               game_id: {$exists: false}});
@@ -64,7 +70,7 @@ Template.lobby.count = function () {
   return players.count();
 };
 
-Template.lobby.disabled = function () {
+Template['lobby'].disabled = function () {
   var me = player();
   if (me && me.name)
     return '';
@@ -72,7 +78,7 @@ Template.lobby.disabled = function () {
 };
 
 
-Template.lobby.events({
+Template['lobby'].events({
   'keyup input#myname': function (evt) {
     var name = $('#lobby input#myname').val().trim();
     Players.update(Session.get('player_id'), {$set: {name: name}});
@@ -91,20 +97,20 @@ var SPLASH = ['','','','',
               'P', 'L', 'A', 'Y',
               '','','',''];
 
-Template.board.square = function (i) {
+Template['board'].square = function (i) {
   var g = game();
   return g && g.board && g.board[i] || SPLASH[i];
 };
 
-Template.board.selected = function (i) {
+Template['board'].selected = function (i) {
   return Session.get('selected_' + i);
 };
 
-Template.board.clock = function () {
+Template['board'].clock = function () {
   var clock = game() && game().clock;
 
   if (!clock || clock === 0)
-    return;
+    return undefined;
 
   // format into M:SS
   var min = Math.floor(clock / 60);
@@ -112,7 +118,7 @@ Template.board.clock = function () {
   return min + ':' + (sec < 10 ? ('0' + sec) : sec);
 };
 
-Template.board.events({
+Template['board'].events({
   'click .square': function (evt) {
     var textbox = $('#scratchpad input');
     textbox.val(textbox.val() + evt.target.innerHTML);
@@ -124,11 +130,11 @@ Template.board.events({
 ////// scratchpad is where we enter new words.
 //////
 
-Template.scratchpad.show = function () {
+Template['scratchpad'].show = function () {
   return game() && game().clock > 0;
 };
 
-Template.scratchpad.events({
+Template['scratchpad'].events({
   'click button, keyup input': function (evt) {
     var textbox = $('#scratchpad input');
     // if we clicked the button or hit enter
@@ -149,11 +155,11 @@ Template.scratchpad.events({
   }
 });
 
-Template.postgame.show = function () {
+Template['postgame'].show = function () {
   return game() && game().clock === 0;
 };
 
-Template.postgame.events({
+Template['postgame'].events({
   'click button': function (evt) {
     Players.update(Session.get('player_id'), {$set: {game_id: null}});
   }
@@ -163,22 +169,22 @@ Template.postgame.events({
 ////// scores shows everyone's score and word list.
 //////
 
-Template.scores.show = function () {
+Template['scores'].show = function () {
   return !!game();
 };
 
-Template.scores.players = function () {
+Template['scores'].players = function () {
   return game() && game().players;
 };
 
-Template.player.winner = function () {
+Template['player'].winner = function () {
   var g = game();
   if (g.winners && _.include(g.winners, this._id))
     return 'winner';
   return '';
 };
 
-Template.player.total_score = function () {
+Template['player'].total_score = function () {
   var words = Words.find({game_id: game() && game()._id,
                           player_id: this._id});
 
@@ -190,7 +196,7 @@ Template.player.total_score = function () {
   return score;
 };
 
-Template.words.words = function () {
+Template['words'].words = function () {
   return Words.find({game_id: game() && game()._id,
                     player_id: this._id});
 };

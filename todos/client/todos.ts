@@ -80,33 +80,33 @@ var activateInput = function(input) {
 
 ////////// Lists //////////
 
-Template['lists']['loading'] = function() {
+Template['lists'].loading = function() {
 	return !listsHandle.ready();
 };
 
-Template['lists']['lists'] = function() {
+Template['lists'].lists = function() {
 	return Lists.find({}, {sort: {name: 1}});
 };
 
-var em:Meteor.EventMap = <Meteor.EventMap>{};
+Template['lists'].events({
 
-em['mousedown .list'] = <Meteor.EventMapFunction>function(evt:Meteor.EventHandler) {
-	// select list
-	Router.setList(this._id);
-};
+	'mousedown .list': function(evt:Meteor.EventHandler) {
+		// select list
+		Router.setList(this._id);
+	},
 
-em['click .list'] = <Meteor.EventMapFunction>function(evt:Meteor.EventHandler) {
-	// prevent clicks on <a> from refreshing the page.
-	evt.preventDefault();
-};
+	'click .list': function(evt:Meteor.EventHandler) {
+		// prevent clicks on <a> from refreshing the page.
+		evt.preventDefault();
+	},
 
-em['dblclick .list'] = <Meteor.EventMapFunction>function(evt:Meteor.EventHandler, template:Meteor.TemplateInstance) { // start editing list name
-	Session.set('editing_listname', this._id);
-	Deps.flush(); // force DOM redraw, so we can focus the edit field
-	activateInput(template.find("#list-name-input"));
-};
+	'dblclick .list': function(evt:Meteor.EventHandler, template:Meteor.TemplateInstance) { // start editing list name
+		Session.set('editing_listname', this._id);
+		Deps.flush(); // force DOM redraw, so we can focus the edit field
+		activateInput(template.find("#list-name-input"));
+	}
 
-Template['lists'].events(em);
+});
 
 // Attach events to keydown, keyup, and blur on "New list" input box.
 Template['lists'].events(okCancelEvents(
@@ -209,42 +209,42 @@ Template['todo_item']['adding_tag'] = function():boolean {
 	return Session.equals('editing_addtag', this._id);
 };
 
-em = <Meteor.EventMap>{};
+//em = <Meteor.EventMap>{};
 
-em['click .check'] = <Meteor.EventMapFunction>function():void {
-	Todos.update(this._id, {$set: {done: !this.done}});
-};
+Template['todo_item'].events({
+	'click .check': function() {
+		Todos.update(this._id, {$set: {done: !this.done}});
+	},
 
-em['click .destroy'] = <Meteor.EventMapFunction>function():void {
+	'click .destroy': function() {
 
-	Todos.remove(this._id);
-};
+		Todos.remove(this._id);
+	},
 
-em['click .addtag'] = <Meteor.EventMapFunction>function(evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
-	Session.set('editing_addtag', this._id);
-	Deps.flush(); // update DOM before focus
-	activateInput(tmpl.find("#edittag-input"));
-};
+	'click .addtag': function(evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
+		Session.set('editing_addtag', this._id);
+		Deps.flush(); // update DOM before focus
+		activateInput(tmpl.find("#edittag-input"));
+	},
 
-em['dblclick .display .todo-text'] = <Meteor.EventMapFunction>function(evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
-	Session.set('editing_itemname', this._id);
-	Deps.flush(); // update DOM before focus
-	activateInput(tmpl.find("#todo-input"));
-};
+	'dblclick .display .todo-text': function(evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
+		Session.set('editing_itemname', this._id);
+		Deps.flush(); // update DOM before focus
+		activateInput(tmpl.find("#todo-input"));
+	},
+	'click .remove': function(evt:Meteor.EventHandler) {
+		var tag = this.tag;
+		var id = this.todo_id;
 
-em['click .remove'] = <Meteor.EventMapFunction>function(evt:Meteor.EventHandler) {
-	var tag = this.tag;
-	var id = this.todo_id;
+		(<HTMLElement>evt.target.parentNode).style.opacity = "0";
 
-	(<HTMLElement>evt.target.parentNode).style.opacity = "0";
+		// wait for CSS animation to finish
+		Meteor.setTimeout(function() {
+			Todos.update({_id: id}, {$pull: {tags: tag}});
+		}, 300);
+	}
 
-	// wait for CSS animation to finish
-	Meteor.setTimeout(function() {
-		Todos.update({_id: id}, {$pull: {tags: tag}});
-	}, 300);
-};
-
-Template['todo_item'].events(em);
+});
 
 Template['todo_item'].events(okCancelEvents(
 	'#todo-input',
@@ -302,16 +302,14 @@ Template['tag_filter']['selected'] = function() {
 	return Session.equals('tag_filter', this.tag) ? 'selected' : '';
 };
 
-em = <Meteor.EventMap>{};
-
-em['mousedown .tag'] = <Meteor.EventMapFunction> function() {
-	if (Session.equals('tag_filter', this.tag))
-		Session.set('tag_filter', null);
-	else
-		Session.set('tag_filter', this.tag);
-};
-
-Template['tag_filter'].events(em);
+Template['tag_filter'].events({
+	'mousedown .tag': function() {
+		if (Session.equals('tag_filter', this.tag))
+			Session.set('tag_filter', null);
+		else
+			Session.set('tag_filter', this.tag);
+	}
+});
 
 ////////// Tracking selected list in URL //////////
 

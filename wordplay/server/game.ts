@@ -1,3 +1,8 @@
+/// <reference path="../../lib.d.ts"/>
+/// <reference path="../../meteor.d.ts"/>
+/// <reference path="../../underscore.d.ts"/>
+/// <reference path="../model.d.ts"/>
+
 ////////// Server only logic //////////
 
 Meteor.methods({
