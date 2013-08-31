@@ -10,23 +10,23 @@ Games = new Meteor.Collection<GamesDAO>('games');
 // { board: ['A','I',...], clock: 60,
 //   players: [{player_id, name}], winners: [player_id] }
 
-Words:Meteor.Collection<WordsDAO> = new Meteor.Collection<WordsDAO>('words');
+Words = new Meteor.Collection<WordsDAO>('words');
 // {player_id: 10, game_id: 123, word: 'hello', state: 'good', score: 4}
 
 Players = new Meteor.Collection<PlayersDAO>('players');
 // {name: 'matt', player_id: 123}
 
 // 6 faces per die, 16 dice.  Q really means Qu.
-var DICE = ['PCHOAS', 'OATTOW', 'LRYTTE', 'VTHRWE',
+var DICE:string[] = ['PCHOAS', 'OATTOW', 'LRYTTE', 'VTHRWE',
 			'EGHWNE', 'SEOTIS', 'ANAEEG', 'IDSYTT',
 			'MTOICU', 'AFPKFS', 'XLDERI', 'ENSIEU',
 			'YLDEVR', 'ZNRNHL', 'NMIQHU', 'OBBAOJ'];
 
-var DICTIONARY = null;
+var DICTIONARY:boolean[] = null;
 
 // board is an array of length 16, in row-major order.  ADJACENCIES
 // lists the board positions adjacent to each board position.
-var ADJACENCIES = [
+var ADJACENCIES:number[][] = [
 	[1, 4, 5],
 	[0, 2, 4, 5, 6],
 	[1, 3, 5, 6, 7],
@@ -47,8 +47,8 @@ var ADJACENCIES = [
 
 // generate a new random selection of letters.
 
-new_board = function() {
-	var board = [];
+new_board = function():string[] {
+	var board:string[] = [];
 	var i;
 
 	// pick random letter from each die
@@ -72,12 +72,13 @@ new_board = function() {
 // path can use each position only once, and each position must be
 // adjacent to the previous position.
 
-paths_for_word = function(board, word) {
-	var valid_paths = [];
+paths_for_word = function(board:string[], word:string):number[][] {
+	var valid_paths:number[][] = [[]];
 
-	var check_path = function(word, path, positions_to_try) {
+	var check_path = function(word:string, path:Array<number>, positions_to_try:Array<number>) {
 		// base case: the whole word has been consumed.  path is valid.
 		if (word.length === 0) {
+
 			valid_paths.push(path);
 			return;
 		}
@@ -89,7 +90,8 @@ paths_for_word = function(board, word) {
 		// path, and the positions adjacent to the match.
 
 		for (var i = 0 ; i < positions_to_try.length ; i++) {
-			var pos = positions_to_try[i];
+
+			var pos:number = positions_to_try[i];
 			if (board[pos] === word[0] && path.indexOf(pos) === -1)
 				check_path(word.slice(1),      // cdr of word
 					path.concat([pos]), // append matching loc to path
@@ -105,10 +107,10 @@ paths_for_word = function(board, word) {
 };
 
 Meteor.methods({
-	score_word: function(word_id) {
+	score_word: function(word_id:string) {
 		check(word_id, String);
-		var word = Words.findOne(word_id);
-		var game = Games.findOne(word.game_id);
+		var word:WordsDAO = Words.findOne(word_id);
+		var game:GamesDAO = Games.findOne(word.game_id);
 
 		// client and server can both check: must be at least three chars
 		// long, not already used, and possible to make on the board.
@@ -132,8 +134,8 @@ Meteor.methods({
 });
 
 if (Meteor.isServer) {
-	DICTIONARY = {};
-	_.each(Assets.getText("enable2k.txt").split("\n"), function(line) {
+	DICTIONARY = [];
+	_.each(Assets.getText("enable2k.txt").split("\n"), function(line:string) {
 		// Skip comment lines
 		if (line.indexOf("//") !== 0) {
 			DICTIONARY[line] = true;
@@ -146,14 +148,14 @@ if (Meteor.isServer) {
 	});
 
 	// publish single games
-	Meteor.publish('games', function(id) {
+	Meteor.publish('games', function(id:string) {
 		check(id, String);
 		return Games.find({_id: id});
 	});
 
 	// publish all my words and opponents' words that the server has
 	// scored as good.
-	Meteor.publish('words', function(game_id, player_id) {
+	Meteor.publish('words', function(game_id:string, player_id:string) {
 		check(game_id, String);
 		check(player_id, String);
 		return Words.find({$or: [

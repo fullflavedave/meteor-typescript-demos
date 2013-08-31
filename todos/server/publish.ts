@@ -16,7 +16,7 @@ Meteor.publish('lists', function() {
 //           timestamp: Number}
 
 // Publish all items for requested list_id.
-Meteor.publish('todos', function(list_id) {
+Meteor.publish('todos', function(list_id:string) {
 	check(list_id, String);
 	return Todos.find({list_id: list_id});
 });

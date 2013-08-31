@@ -42,12 +42,12 @@ Meteor.startup(function () {
       }
     ];
 
-    var timestamp = (new Date()).getTime();
-    for (var i = 0; i < data.length; i++) {
-      var list_id = Lists.insert(<ListDAO>{name: data[i].name});
-      for (var j = 0; j < data[i].contents.length; j++) {
+    var timestamp:number = (new Date()).getTime();
+    for (var i:number = 0; i < data.length; i++) {
+      var list_id:string = Lists.insert({name: data[i].name});
+      for (var j:number = 0; j < data[i].contents.length; j++) {
         var info = data[i].contents[j];
-        Todos.insert(<TodoDAO>{list_id: list_id,
+        Todos.insert({list_id: list_id,
                       text: info[0],
                       timestamp: timestamp,
                       tags: info.slice(1)});

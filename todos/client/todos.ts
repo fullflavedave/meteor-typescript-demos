@@ -92,17 +92,17 @@ Template['lists']['lists'] = function () {
 
 Template['lists'].events({
 
-    'mousedown .list': <Meteor.EventMapFunction> function () {
+    'mousedown .list': function () {
         // select list
         Router.setList(this._id);
     },
 
-    'click .list': <Meteor.EventMapFunction>function (evt:Meteor.EventHandler) {
+    'click .list': function (evt:Meteor.EventHandler) {
         // prevent clicks on <a> from refreshing the page.
         evt.preventDefault();
     },
 
-    'dblclick .list': <Meteor.EventMapFunction>function (evt:Meteor.EventHandler, template:Meteor.TemplateInstance) { // start editing list name
+    'dblclick .list': function (evt:Meteor.EventHandler, template:Meteor.TemplateInstance) { // start editing list name
         Session.set('editing_listname', this._id);
         Deps.flush(); // force DOM redraw, so we can focus the edit field
         activateInput(template.find("#list-name-input"));
@@ -214,27 +214,28 @@ Template['todo_item']['adding_tag'] = function ():boolean {
 //em = <Meteor.EventMap>{};
 
 Template['todo_item'].events({
-    'click .check': <Meteor.EventMapFunction> function () {
+    'click .check': function () {
         Todos.update(this._id, {$set: {done: !this.done}});
     },
 
-    'click .destroy': <Meteor.EventMapFunction>  function () {
+    'click .destroy': function () {
 
         Todos.remove(this._id);
     },
 
-    'click .addtag': <Meteor.EventMapFunction> function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
+    'click .addtag': function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
         Session.set('editing_addtag', this._id);
         Deps.flush(); // update DOM before focus
         activateInput(tmpl.find("#edittag-input"));
     },
 
-    'dblclick .display .todo-text': <Meteor.EventMapFunction> function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
+    'dblclick .display .todo-text': function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
         Session.set('editing_itemname', this._id);
-        Deps.flush(); // update DOM before focus
+        Deps.flush();
+        // update DOM before focus
         activateInput(tmpl.find("#todo-input"));
     },
-    'click .remove': <Meteor.EventMapFunction> function (evt:Meteor.EventHandler) {
+    'click .remove': function (evt:Meteor.EventHandler) {
         var tag = this.tag;
         var id = this.todo_id;
 
@@ -315,7 +316,7 @@ Template['tag_filter']['selected'] = function () {
 };
 
 Template['tag_filter'].events({
-    'mousedown .tag':  <Meteor.EventMapFunction>  function () {
+    'mousedown .tag': <Meteor.EventMapFunction>  function () {
         if (Session.equals('tag_filter', this.tag))
             Session.set('tag_filter', null);
         else

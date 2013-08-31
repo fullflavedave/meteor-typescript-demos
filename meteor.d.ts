@@ -405,7 +405,7 @@ declare module Meteor {
 
 		findOne(selector?, options?):T;
 
-		insert(doc:T, callback?:Function);
+		insert(doc:T, callback?:Function):string;
 
 		update(selector:any, modifier, options?, callback?:Function);
 
@@ -528,27 +528,23 @@ declare module Meteor {
 	}
 
 	interface EventMap {
-		[id:string]:Meteor.EventMapFunction;
+		[id:string]:Function;
 	}
 
 	// USER ---------------------
 
 	interface UserEmail {
-
 		address:string;
 		verified:boolean;
-
 	}
 
 	interface User {
-
 		_id:string;
 		username:string;
 		emails:Meteor.UserEmail[];
 		createdAt: number;
 		profile: any;
 		services: any;
-
 	}
 }
 
