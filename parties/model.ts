@@ -22,7 +22,7 @@ var attending = function(party) {
 	return (_.groupBy(party.rsvps, 'rsvp')['yes'] || []).length;
 };
 
-Parties = new Meteor.Collection<PartyDAO>("parties");
+Parties = new Meteor.Collection<PartiesDAO>("parties");
 
 Parties.allow({
 	insert: function(userId, party) {
@@ -56,6 +56,7 @@ var Coordinate = Match.Where(function(x) {
 	check(x, Number);
 	return x >= 0 && x <= 1;
 });
+
 
 Meteor.methods({
 	// options should include: title, description, x, y, public
@@ -93,7 +94,7 @@ Meteor.methods({
 
 		check(partyId, String);
 		check(userId, String);
-		var party = Parties.findOne(partyId);
+		var party:PartiesDAO = Parties.findOne(partyId);
 		if (!party || party.owner !== self.userId)
 			throw new Meteor.Error(404, "No such party");
 		if (party.public)
@@ -126,7 +127,7 @@ Meteor.methods({
 			throw new Meteor.Error(403, "You must be logged in to RSVP");
 		if (!_.contains(['yes', 'no', 'maybe'], rsvp))
 			throw new Meteor.Error(400, "Invalid RSVP");
-		var party = Parties.findOne(partyId);
+		var party:PartiesDAO = Parties.findOne(partyId);
 		if (!party)
 			throw new Meteor.Error(404, "No such party");
 		if (!party.public && party.owner !== this.userId && !_.contains(party.invited, this.userId))

@@ -1,6 +1,6 @@
 // <reference path="../../lib.d.ts" />
 // <reference path="../../meteor.d.ts" />
-// <reference path="../model.ts" />
+// <reference path="../model.d.ts" />
 // All Tomorrow's Parties -- server
 
 Meteor.publish("directory", function () {

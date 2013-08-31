@@ -1,7 +1,7 @@
 // <reference path="../../lib.d.ts" />
 // <reference path="../../meteor.d.ts" />
 // <reference path="../../d3.d.ts" />
-// <reference path="../model.ts" />
+// <reference path="../model.d.ts" />
 
 // All Tomorrow's Parties -- client
 
@@ -234,7 +234,7 @@ Template['page'].showCreateDialog = function () {
 };
 
 Template['createDialog'].events({
-    'click .save': function (event, template) {
+    'click .save': function (event:Meteor.EventHandler, template:Meteor.TemplateInstance) {
         var title = template.find(".title").value;
         var description = template.find(".description").value;
         var public = !(<any>template.find(".private")).checked;

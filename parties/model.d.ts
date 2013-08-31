@@ -1,6 +1,7 @@
 /// <reference path="../meteor.d.ts" />
 /// <reference path="../underscore.d.ts" />
-interface PartyDAO {
+
+interface PartiesDAO {
     _id?: string;
     owner?: string;
     x?: number;
@@ -12,4 +13,4 @@ interface PartyDAO {
     rsvps?: Array;
 }
 
-declare var Parties:Meteor.Collection<PartyDAO>;
+declare var Parties:Meteor.Collection<PartiesDAO>;
