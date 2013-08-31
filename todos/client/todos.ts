@@ -90,19 +90,19 @@ Template['lists']['lists'] = function () {
     return Lists.find({}, {sort: {name: 1}});
 };
 
-Template['lists'].events(<Meteor.EventMap>{
+Template['lists'].events({
 
-    'mousedown .list': function () {
+    'mousedown .list': <Meteor.EventMapFunction> function () {
         // select list
         Router.setList(this._id);
     },
 
-    'click .list': function (evt:Meteor.EventHandler) {
+    'click .list': <Meteor.EventMapFunction>function (evt:Meteor.EventHandler) {
         // prevent clicks on <a> from refreshing the page.
         evt.preventDefault();
     },
 
-    'dblclick .list': function (evt:Meteor.EventHandler, template:Meteor.TemplateInstance) { // start editing list name
+    'dblclick .list': <Meteor.EventMapFunction>function (evt:Meteor.EventHandler, template:Meteor.TemplateInstance) { // start editing list name
         Session.set('editing_listname', this._id);
         Deps.flush(); // force DOM redraw, so we can focus the edit field
         activateInput(template.find("#list-name-input"));
@@ -214,27 +214,27 @@ Template['todo_item']['adding_tag'] = function ():boolean {
 //em = <Meteor.EventMap>{};
 
 Template['todo_item'].events({
-    'click .check': function () {
+    'click .check': <Meteor.EventMapFunction> function () {
         Todos.update(this._id, {$set: {done: !this.done}});
     },
 
-    'click .destroy': function () {
+    'click .destroy': <Meteor.EventMapFunction>  function () {
 
         Todos.remove(this._id);
     },
 
-    'click .addtag': function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
+    'click .addtag': <Meteor.EventMapFunction> function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
         Session.set('editing_addtag', this._id);
         Deps.flush(); // update DOM before focus
         activateInput(tmpl.find("#edittag-input"));
     },
 
-    'dblclick .display .todo-text': function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
+    'dblclick .display .todo-text': <Meteor.EventMapFunction> function (evt:Meteor.EventHandler, tmpl:Meteor.TemplateInstance) {
         Session.set('editing_itemname', this._id);
         Deps.flush(); // update DOM before focus
         activateInput(tmpl.find("#todo-input"));
     },
-    'click .remove': function (evt:Meteor.EventHandler) {
+    'click .remove': <Meteor.EventMapFunction> function (evt:Meteor.EventHandler) {
         var tag = this.tag;
         var id = this.todo_id;
 
@@ -274,9 +274,15 @@ Template['todo_item'].events(okCancelEvents(
 
 ////////// Tag Filter //////////
 
+interface TagInfo {
+    tag: string;
+    count: number;
+}
+
+
 // Pick out the unique tags from all todos in current list.
 Template['tag_filter']['tags'] = function () {
-    var tag_infos = [];
+    var tag_infos:Array<TagInfo> = [];
     var total_count = 0;
 
     Todos.find({list_id: Session.get('list_id')}).forEach(function (todo) {
@@ -309,7 +315,7 @@ Template['tag_filter']['selected'] = function () {
 };
 
 Template['tag_filter'].events({
-    'mousedown .tag': function () {
+    'mousedown .tag':  <Meteor.EventMapFunction>  function () {
         if (Session.equals('tag_filter', this.tag))
             Session.set('tag_filter', null);
         else

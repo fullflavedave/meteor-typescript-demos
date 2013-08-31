@@ -524,7 +524,7 @@ declare module Meteor {
 	}
 
 	interface EventMapFunction extends Function {
-		(event?:Meteor.EventHandler, template?:Meteor.TemplateInstance):void;
+		(event?:Meteor.EventHandler, template?:Meteor.TemplateInstance):any;
 	}
 
 	interface EventMap {
