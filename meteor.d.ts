@@ -57,6 +57,8 @@ declare module Package {
 		add_files(file:string, where?:string);
 		add_files(file:string[], where?:string[]);
 		add_files(file:string[], where?:string);
+		imply(package:string);
+		imply(packages:string[]);
 	}
 
 	interface BundleOptions {
