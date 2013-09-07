@@ -79,7 +79,17 @@ declare module Package {
 
 interface Tinytest {
 
+//	Tinytest.addAsync("Add object to a collection", function(test, next) {
+//	var people = new Meteor.Collection("people");
+//	people.insert({"name": "Andrew"}, function(error, id) {
+//	test.isNull(error);
+//	next();
+//});
+//});
+
+
 	add(name:string, func:Function);
+	addAsync(name:string, func:Function);
 }
 
 declare var Tinytest:Tinytest;
