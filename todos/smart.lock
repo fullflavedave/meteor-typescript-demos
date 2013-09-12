@@ -2,13 +2,19 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "typescript-compiler": {}
+      "typescript-compiler": {},
+      "typescript-libs": {}
     },
     "packages": {
       "typescript-compiler": {
         "git": "https://github.com/orefalo/meteor-typescript-compiler.git",
-        "tag": "v0.7.3.1",
-        "commit": "652f4be525fb2b69cd69971abd2f4050dc6fe2a4"
+        "tag": "v0.7.6.2",
+        "commit": "7a9f9abef567bf29ee40b823549d1bb1a0a4452b"
+      },
+      "typescript-libs": {
+        "git": "https://github.com/orefalo/meteor-typescript-libs.git",
+        "tag": "v0.1.0",
+        "commit": "4a5ca39e137b1005930b84bd25b090ad5149029f"
       }
     }
   }

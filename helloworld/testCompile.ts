@@ -1,9 +1,9 @@
-/// <reference path="meteor.d.ts" />
-/// <reference path="node.d.ts" />
+/// <reference path="./packages/typescript-libs/meteor.d.ts" />
+/// <reference path="./packages/typescript-libs/node.d.ts" />
 
 if (Meteor.isClient) {
   Template['hello']['greeting'] = function () {
-    return "Welcome to testCompile.";
+    return "HelloWorld Metor+TypeScript.";
   };
 
   Template['hello'].events(<Meteor.EventMap>{
@@ -18,5 +18,6 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
+    console.log("Server is saying, Helloworld TypeScript");
   });
 }

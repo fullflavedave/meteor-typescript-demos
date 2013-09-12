@@ -1,5 +1,5 @@
-// <reference path="../../lib.d.ts" />
-// <reference path="../../meteor.d.ts" />
+// <reference path="../packages/typescript-libs/lib.d.ts" />
+// <reference path="../packages/typescript-libs/meteor.d.ts" />
 // <reference path="../model.d.ts" />
 // All Tomorrow's Parties -- server
 

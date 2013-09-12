@@ -1,6 +1,6 @@
-/// <reference path="../../lib.d.ts"/>
-/// <reference path="../../meteor.d.ts"/>
-/// <reference path="../../underscore.d.ts"/>
+/// <reference path="../packages/typescript-libs/lib.d.ts"/>
+/// <reference path="../packages/typescript-libs/meteor.d.ts"/>
+/// <reference path="../packages/typescript-libs/underscore.d.ts"/>
 /// <reference path="../model.d.ts"/>
 
 ////////// Server only logic //////////

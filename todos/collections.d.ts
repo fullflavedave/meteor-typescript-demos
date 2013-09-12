@@ -1,4 +1,4 @@
-/// <reference path="../meteor.d.ts" />
+/// <reference path="packages/typescript-libs/meteor.d.ts" />
 interface TodoDAO {
     _id?: string;
     text: string;

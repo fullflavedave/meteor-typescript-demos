@@ -11,3 +11,4 @@ jquery
 preserve-inputs
 insecure
 typescript-compiler
+typescript-libs
